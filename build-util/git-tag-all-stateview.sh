@@ -16,15 +16,15 @@ repoHome=$(dirname ${scriptFolder})
 gitReposHome=$(dirname ${repoHome})
 
 # Main StateView repository
-mainRepo="cdss-app-stateview-main"
+mainRepo="cdss-app-stateview-java"
 mainRepoFolder="$gitReposHome/$mainRepo"
 
-# Determine the version from the software product
+# Determine the version from the CWRAT software product
 # - code line looks like:
 #   public static final String PROGRAM_VERSION = "12.07.00 (2018-09-19)";
 # - this is used as information to help the user specify an intelligent tag name and commit message
 # - grep -m 1 means stop after first occurrence
-productVersion=$(cat $mainRepoFolder/src/DWR/DMI/stateview/StateViewMain.java | grep -m 1 'PROGRAM_VERSION' | cut -d '=' -f 2 | cut -d '(' -f 1 | tr -d " " | tr -d '"')
+productVersion=$(cat $mainRepoFolder/src/DWR/DMI/CWRAT/CWRAT.java | grep -m 1 'String VERSION' | cut -d '=' -f 2 | cut -d '(' -f 1 | tr -d " " | tr -d '"')
 productName="StateView"
 
 # Run the generic utility script
