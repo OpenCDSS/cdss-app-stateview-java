@@ -1,3 +1,26 @@
+// CWRATMainJFrame - Main GUI for the CWRAT
+
+/* NoticeStart
+
+StateView (also includes CWRAT)
+StateView is a part of Colorado's Decision Support Systems (CDSS)
+Copyright (C) 1997-2019 Colorado Department of Natural Resources
+
+StateView is free software:  you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+StateView is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+    along with StateView.  If not, see <https://www.gnu.org/licenses/>.
+
+NoticeEnd */
+
 //------------------------------------------------------------------------------
 // CWRATMainJFrame - Main GUI for the CWRAT. 
 //------------------------------------------------------------------------------
@@ -877,34 +900,68 @@ public void actionPerformed(ActionEvent evt) {
 	// Help...
 	else if (s.equals(__HELP_ABOUT_CWRAT)) {
 		setStatusText("About CWRAT.");
-		new HelpAboutJDialog(this, "About CWRAT",
-		"Colorado Water Rights Administration Tool (CWRAT)\n" +
-		IOUtil.getProgramVersion()+ "\n" +
-		"Copyright 1997-2013\n" +
+		String helpString =
+		IOUtil.getProgramName() + " " + IOUtil.getProgramVersion() + "\n\n" +
+		"CWRAT provides HydroBase data viewing features similar to StateView\n" +
+		"and includes water right administration features.\n\n" +
+		"CWRAT is a part of Colorado's Decision Support Systems (CDSS)\n" +
+		"Copyright (C) 1997-2019 Colorado Department of Natural Resources\n" +
+		" \n" +
+		"CWRAT is free software:  you can redistribute it and/or modify\n" +
+		"    it under the terms of the GNU General Public License as published by\n" +
+		"    the Free Software Foundation, either version 3 of the License, or\n" +
+		"    (at your option) any later version.\n" +
+		" \n" +
+		"CWRAT is distributed in the hope that it will be useful,\n" +
+		"    but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+		"    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+		"    GNU General Public License for more details.\n" +
+		" \n" +
+		"You should have received a copy of the GNU General Public License\n" +
+		"    along with CWRAT.  If not, see <https://www.gnu.org/licenses/>.\n" +
+		" \n" +
+		"Developed by the Open Water Foundation\n" +
+		"\n" +
+		"Funded by:\n" +
 		"Colorado Division of Water Resources\n" +
 		"Colorado Water Conservation Board\n" +
-		"Developed by Riverside Technology, inc.\n" +
-		"This application is an administrative tool for the " +
-		"Division of Water Resources.\n" +
-		"All data entered in the Daily Water Information Sheets are unverified\n" +
-		"spot estimate data, and should not be considered the legal diversion record.\n" +
-		"Use of these data for modelling purposes should be done with caution.\n" +
-		"Send comments about this interface to:\n" +
-		"cdss@state.co.us\n" +
-		"http://cdss.state.co.us", true);
+		"\n" +
+		"Send comments to\n" +
+		"DNR_OpenCDSS@state.co.us\n" +
+		"steve.malers@openwaterfoundation.org";
+		new HelpAboutJDialog(this, "About CWRAT", helpString, true );
 	}
 	else if (s.equals(__HELP_ABOUT_STATEVIEW)) {
 		setStatusText("About StateView.");
-		new HelpAboutJDialog(this, "About StateView",
-			"StateView\n" +
-			IOUtil.getProgramVersion()+ "\n" +
-			"Copyright 1997-2013\n" +
-			"Colorado Division of Water Resources\n" +
-			"Colorado Water Conservation Board\n" +
-			"Developed by Riverside Technology, inc.\n" +
-			"Send comments about this interface to:\n" +
-			"cdss@state.co.us\n" +
-			"http://cdss.state.co.us", true);
+		String helpString =
+		IOUtil.getProgramName() + " " + IOUtil.getProgramVersion() + "\n\n" +
+		"StateView provides HydroBase data viewing features.\n\n" +
+		"StateView is a part of Colorado's Decision Support Systems (CDSS)\n" +
+		"Copyright (C) 1997-2019 Colorado Department of Natural Resources\n" +
+		" \n" +
+		"StateView is free software:  you can redistribute it and/or modify\n" +
+		"    it under the terms of the GNU General Public License as published by\n" +
+		"    the Free Software Foundation, either version 3 of the License, or\n" +
+		"    (at your option) any later version.\n" +
+		" \n" +
+		"StateView is distributed in the hope that it will be useful,\n" +
+		"    but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+		"    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+		"    GNU General Public License for more details.\n" +
+		" \n" +
+		"You should have received a copy of the GNU General Public License\n" +
+		"    along with StateView.  If not, see <https://www.gnu.org/licenses/>.\n" +
+		" \n" +
+		"Developed by the Open Water Foundation\n" +
+		"\n" +
+		"Funded by:\n" +
+		"Colorado Division of Water Resources\n" +
+		"Colorado Water Conservation Board\n" +
+		"\n" +
+		"Send comments to\n" +
+		"DNR_OpenCDSS@state.co.us\n" +
+		"steve.malers@openwaterfoundation.org";
+		new HelpAboutJDialog(this, "About StateView", helpString, true );
 	}
 	else if ( s.equals ( __Help_ViewDocumentation_String )) {
         uiAction_ViewDocumentation ();

@@ -6,7 +6,9 @@ Eclipse is used for development and repositories currently contain Eclipse proje
 setting up the Eclipse development environment.
 
 StateView is part of
-[Colorado's Decision Support Systems (CDSS)](https://www.colorado.gov/cdss).
+[Colorado's Decision Support Systems (CDSS)](https://www.colorado.gov/cdss) and provides a desktop tool for viewing
+the State of Colorado's HydroBase database, when HydroBase is installed on a desktop computer or server
+with ODBC access.
 See the following online resources:
 
 * [Colorado's Decision Support Systems](https://www.colorado.gov/cdss)
@@ -16,6 +18,8 @@ hosted on the Open Water Foundation website while the OpenCDSS server is configu
 This README serves as the developer documentation.
 See TSTool developer documentation for more expansive information for similar Eclipse/Java development environment.
 
+* [Repository Status](#repository-status)
+* [StateView and CWRAT Integration](#stateview-and-cwrat-integration)
 * [Repository Folder Structure](#repository-folder-structure)
 * [Repository Dependencies](#repository-dependencies)
 * [Development Environment Folder Structure](#development-environment-folder-structure)
@@ -26,6 +30,36 @@ See TSTool developer documentation for more expansive information for similar Ec
 * [Contact](#contact)
 
 -----
+
+## Repository Status ##
+
+See the next section for background on the repository contents.
+The most recent code has been moved into GitHub.
+However, given that StateView is not actively developed,
+some of the automated processes used to release the software have not been fully tested.
+If a release needs to be made, the build processes will need to be fully tested.
+These processes are similar to TSTool.
+The software can be run from the development environment.
+
+## StateView and CWRAT Integration ##
+
+The code in this repository is a combination of previously separate code for
+StateView and Colorado Water Rights Administration Tool (CWRAT).
+The main repository previously focused on CWRAT, which includes the data viewing features of StateView
+and features to perform water rights administration, including Water Information Sheet (WIS) features.
+A smaller repository for StateView was previously maintained, mainly to store the configuration and installer
+files to create separate StateView installer.
+Running StateView and CWRAT is essentially, with `-viewonly` command-line option indicating which version is running.
+
+Use of CWRAT was phased out in favor of other tools and mainly has historical value.
+StateView continues to be used by some, especially modelers with local HydroBase installations,
+because it provides faster access to data than online tools.
+The code from both products was consolidated into this repository with `-CWRAT` added to folders that
+are specific to CWRAT.
+Going forward, work can focus on StateView, with CWRAT retained in the repository for historical reference.
+
+TSTool also now provides many features comparable to StateView, such as being able to query
+database tables as datastores (see ReadTableFromDataStore command).
 
 ## Repository Folder Structure ##
 
@@ -42,18 +76,23 @@ cdss-app-stateview-java/      StateView source code and development working file
   .project                    Eclipse configuration file.
   bin/                        Eclipse folder for compiled files (dynamic so ignored from repo).
   build-util/                 Utility scripts used in development environment.
-  conf/                       Configuration files for installer build tools.
+  conf/                       Configuration files for StateView installer build tools.
+  conf-CWRAT/                 Configuration files for CWRAT installer build tools.
   dist/                       Folder used to build distributable installer (ignored from repo).
-  externals/                  Third-party libraries and tools (may remove/move in future).
+  externals/                  Third-party libraries and tools for StateView (may remove/move in future).
+  externals-CWRAT/            Third-party libraries and tools for CWRAT (may remove/move in future).
   graphics/                   Images (may remove/move in future).
   installer/                  StateView-specific files used to create installer.
+  installer-CWRAT/            CWRAT-specific files used to create installer.
   lib/                        Third-party libraries.
   LICENSE.md                  StateView license file.
   README.md                   This file.
-  resources/                  Additional resources, such as runtime files for installer.
+  resources/                  Additional StateView resources, such as runtime files for installer.
+  resources-CWRAT/            Additional CWRAT resources, such as runtime files for installer.
   scripts/                    Eclipse run and external tools configurations.
-  src/                        StateView main application source code.
-  test/                       Unit tests using JUnit.
+  src/                        StateView (and CWRAT) main application source code.
+  test/                       Test configuration for StateView.
+  test-CWRAT/                 Test configuration for CWRAT.
 ```
 
 ## Repository Dependencies ##
@@ -114,15 +153,18 @@ C:\Users\user\                               Windows user home folder (typical d
 
 1. The Eclipse software should be installed as per TSTool development environment.
 2. In the `git-repos` folder, clone the main repository with:  `git clone https://github.com/OpenCDSS/cdss-app-stateview-java.git`.
-3. For the resulting repository, use Git Bash to run `build-util/git-clone-all-stateview.sh`.
+3. For the resulting repository, use Git Bash to run `build-util/git-clone-all-stateview.sh`,
+which will clone all other needed repositories (will skip any that are already cloned).
 4. Create the `eclipse-workspace` folder as shown in the above folder structure.
 5. In Eclipse, use the ***File / Import / General / Existing Projects into Eclipse***.
 Browse to the `git-repos` folder and select all the projects that are listed and click on ***Finish***.
 6. The projects should import and compile automatically.
+7. The `build-util` git scripts are useful for checking the status on all repositories and performing common tasks.
 
-## Compiling ##
+## Compiling, Running, and Distributing ##
 
 The software should compile automatically when the Eclipse workspace is opened.
+Run using the ***Run Configurations***, for example ***StateView*** run configuration to launch StateView.
 
 ## Contributing ##
 
