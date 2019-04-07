@@ -1,3 +1,26 @@
+// CWRAT - main (application startup) class for CWRAT
+
+/* NoticeStart
+
+StateView (also includes CWRAT)
+StateView is a part of Colorado's Decision Support Systems (CDSS)
+Copyright (C) 1997-2019 Colorado Department of Natural Resources
+
+StateView is free software:  you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+StateView is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+    along with StateView.  If not, see <https://www.gnu.org/licenses/>.
+
+NoticeEnd */
+
 //------------------------------------------------------------------------------
 // CWRAT -	Main program class which is responsible for starting either an
 //		applet or stand alone GUIs.
@@ -511,6 +534,9 @@ throws Exception
 			}
 			break;
 		}
+		else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("--version")) {
+			printVersion();
+		}
 	}
 	// The Java launcher may not pass the command line arguments as desired so instead allow the application
 	// type to be indicated with -Dstateview=true.
@@ -709,6 +735,31 @@ throws Exception {
 		__div = div;
 	}
 }
+
+/**
+Print the program version and exit the program.
+*/
+public static void printVersion ( )
+{	String nl = System.getProperty ( "line.separator" );
+	System.out.println (  nl + IOUtil.getProgramName() + " version: " + IOUtil.getProgramVersion() + nl + nl +
+	"CWRAT is a part of Colorado's Decision Support Systems (CDSS)\n" +
+	"Copyright (C) 1997-2019 Colorado Department of Natural Resources\n" +
+	"\n" +
+	"CWRAT is free software:  you can redistribute it and/or modify\n" +
+	"    it under the terms of the GNU General Public License as published by\n" +
+	"    the Free Software Foundation, either version 3 of the License, or\n" +
+	"    (at your option) any later version.\n" +
+	"\n" +
+	"CWRAT is distributed in the hope that it will be useful,\n" +
+	"    but WITHOUT ANY WARRANTY; without even the implied warranty of\n" +
+	"    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n" +
+	"    GNU General Public License for more details.\n" +
+	"\n" +
+	"You should have received a copy of the GNU General Public License\n" +
+	"    along with CWRAT.  If not, see <https://www.gnu.org/licenses/>.\n" );
+	quitProgram (0);
+}
+
 
 /**
 Clean up and quit the program.
