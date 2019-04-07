@@ -1,0 +1,213 @@
+<!-- Author  :  Kurt Tometich
+	 Date    :  9/19/2006
+	 Purpose :  provides functions to compile, test and
+	            run source code 			
+-->
+
+<project name="buildTemplate" basedir="../" default="run">
+
+	<!-- set the javac location for OS type -->
+	<condition property="executable" value="/home/sharedLibs/j2sdk1.4.2_12/bin/javac">
+		<and>
+	    	<os family="unix" />
+		</and>
+	</condition>
+	
+	<condition property="executable" value="S:\develop\jdk_142\bin\javac">
+		<and>
+		       	<os family="windows" />
+		</and>
+	</condition>
+	
+	<!--============= General Properties =============-->
+	<property name="src.dir"	     location="src"  />
+	<property name="build.dir"	     location="build" />
+	<property name="dist.dir"        location="dist" />
+	<property name="doc.dir"		 location="doc" />
+	<property name="buildwork.dir"   location="${build.dir}/work" />
+	<property name="buildtest.dir"   location="build/test" />
+	<property name="test.dir"	     location="test/unit/src" />
+	<property name="testOp.dir"      location="test/operational" />
+	<property name="jdoc.dir"	     location="doc/javadoc" />
+	<property name="CDSS_OP.dir"     location="test/operational/CDSS" />
+	<property name="ext.dir"         location="externals" />
+	<property name="graphics.dir"    location="graphics" />
+	<property name="nsis.dir"		 location="installer" />
+	<property name="package"     	 value="DWR/DMI/CWRAT" />
+	<property name="executable"  	 
+		location="S:/develop/jdk_142/bin/javac" />
+	<property name="classname"   	 value="DWR.DMI.CWRAT.CWRAT" />
+	<property name="testSuite"  	 value="DWR.DMI.CWRAT.testSuite" />
+	<property name="jarfname"    	 value="CWRAT_142.jar" />
+	<property name="regTest.dir"	 location="test/regression/src" />
+	<property name="proj_name" 		 value="StateView" />
+	
+	<!--================ Dependencies ==================-->
+	<property name="RTi_jar"	  
+			value="${ext.dir}/RTi_Common/RTi_Common_142.jar" />
+	<property name="Hydro_jar"	  
+			value="${ext.dir}/HydroBaseDMI/HydroBaseDMI_142.jar" />
+	<property name="Satmon_jar"	  
+				value="${ext.dir}/SatmonSysDMI/SatmonSysDMI_142.jar" />
+	<property name="mssql_jar"	  
+				value="${ext.dir}/Microsoft_SQL_Server_Java_ODBC_Driver/mssqlall.jar" />
+	<property name="CWRAT_jar"	  
+					value="${ext.dir}/CWRAT/CWRAT_142.jar" />
+		
+	
+	<!-- =========== Compiler Properties ===============-->
+	<property name="compiler" value="modern" />
+	
+	<!-- set classpath -->
+	<path id="classpath">
+		<pathelement location="${RTi_jar}" />
+		<pathelement location="${Hydro_jar}" />
+		<pathelement location="${Satmon_jar}" />
+		<pathelement location="${CWRAT_jar}" />
+		<pathelement location="${mssql_jar}" />
+		<pathelement location="."/>
+	</path>
+	
+	<path id="classpathOp">
+		<pathelement location="${RTi_jar}" />
+		<pathelement location="${Hydro_jar}" />
+		<pathelement location="${Satmon_jar}" />
+		<pathelement location="${CWRAT_jar}" />
+		<pathelement location="${mssql_jar}" />
+		<pathelement location="${dist.dir}/${jarfname}" />
+		<pathelement location="."/>
+	</path>
+	
+	<!-- current timestamp -->
+	<tstamp>
+	  <format property="TODAY" pattern="MM/dd/yyyy hh:mm" locale="en"/> 	
+  	  <format property="jarDate" pattern="yyyy-MM-dd hh:mm" locale="en" />
+	</tstamp>
+	
+	
+<!--===================================================
+	Target:   clean
+	Function: cleans the build/work and build/test
+	          directories to ensure a clean compilation
+====================================================-->
+<target name="clean" description="remove compiled files">
+	
+	<!-- delete build stuff -->
+	<delete dir="${buildwork.dir}" />
+	<delete dir="${build.dir}" />
+
+	<!-- delete javadoc stuff -->
+	<delete dir="${jdoc.dir}" />
+		
+	<delete includeEmptyDirs="true" >
+		<fileset dir="installer/CDSS/" 
+			includes="**/*.exe" />
+		<fileset dir="${dist.dir}" />
+	</delete>
+	
+</target>
+
+<target name="createInstaller" depends="clean"
+	description="runs NSIS to create an executable installer">
+		
+	<ant antfile="${ext.dir}/RTiBuild/common-install.xml" 
+	 target="createNJandNSIS" >
+		<property name="NJProj" value="${proj_name}.njp" />
+		<property name="NJProj.dir" value="installer/CDSS" />
+		<property name="nsis.script" value="${proj_name}.nsi" />
+	</ant>
+
+</target>
+
+<target name="createUserManual"
+ description="Merges PDF documentation into dist folder" >
+	
+	<ant antfile="${ext.dir}/RTiBuild/common-doc.xml"
+	 target="mergePDF" >
+		<property name="filelist" 
+		 value="doc/StateView/UserManual/PDF/filelist.txt" />
+	</ant>
+	
+</target>
+	
+<!--===================================================
+	Target:   run
+	Function: runs the executable from the dist jar
+			  for operational testing
+====================================================-->
+<target name="run" >
+	
+	<java classname="${classname}" fork="true">
+		<jvmarg    value = "-mx256m" />
+		<jvmarg    value = "-Djava.compiler=NONE" />
+		<arg       value = "-home" />
+		<arg	   value = "${CDSS_OP.dir}" />
+		<arg	   value = "-viewonly" />
+		<arg	   value = "true" />
+		<classpath refid = "classpath" />   
+	</java>	
+
+</target>
+	
+
+<!--===================================================
+	Target:   CDSS_runOpD30
+	Function: runs the executable from the dist jar
+			  for operational testing, at TSTool debug level 30
+====================================================-->
+<target name="CDSS_runOpD30"
+	description="runs CDSS env. with final jar file with debug=30">
+	
+	<java classname="${classname}" fork="true">
+		<jvmarg    value = "-mx256m" />
+		<jvmarg    value = "-Djava.compiler=NONE" />
+		<arg       value = "-home" />
+		<arg	   value = "${CDSS_OP.dir}" />
+		<arg       value = "-viewonly" />
+		<arg       value = "true" />
+		<arg		value = "-d" />
+		<arg		value = ",30" />
+		<classpath refid = "classpath" />   
+	</java>	
+
+</target>		
+	
+<!--===================================================
+	Target:   help
+	Function: prints out info on targets and properties
+====================================================-->
+<target name="help">
+	
+<echo>
+
+TARGET         FUNCTION
+===========================================================
+compile        compiles source code
+
+compileTest    compiles the test source code
+
+test           runs the junit tests for this product
+
+clean          removes the build directories
+
+runDev         runs the application using class files
+		
+runOp          runs the application from the dist jar file
+
+javadoc        generates javadocs from source code
+
+jar            copies class files into a single jar file in dist    
+		
+install        creates the executable install file
+	
+help           shows the help for this build file
+===========================================================
+	
+</echo>
+
+</target>
+
+
+</project>
+
+

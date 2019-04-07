@@ -1,0 +1,554 @@
+<!--
+================================================================================
+Ant build.xml file for CWRAT
+================================================================================
+2002-09-06	Steven A. Malers, RTi	Initial version.  Copy and modify the
+					TSTool build.xml file
+2003-06-02	J. Thomas Sapienza, RTi	Removed the 1.1.8 versions.
+2003-10-06	JTS, RTI		Default compiler is now 1.4.2.
+================================================================================
+-->
+
+<project name="CWRAT" default="compile" basedir="..\..\..\..">
+
+<description>
+	Build file for CWRAT.
+</description>
+
+<!--
+================================================================================
+	Global Build Properties
+================================================================================
+-->
+<property name="package" value="DWR/DMI/CWRAT"/>
+<property name="src" location="src"/>
+<!-- the next property ("build") should not have a trailing / on the path.
+     ie, it can be "classes", but not "classes/".  Otherwise, alternate version
+     compilation won't work. -->
+<property name="build" location="classes"/>
+
+<property name="latest_version" value="JDK 1.4.2"/>
+
+<!--
+================================================================================
+	Classpath and other path components
+================================================================================
+-->
+<path id="swing">		
+	<pathelement location="I:\develop\bin\swingall.jar"/>
+</path>
+	
+<!--
+================================================================================
+INIT
+	Initialization of environment variables for using JDK 1.4.2
+================================================================================
+-->
+<target name="init_142"
+	description="Set-up of the environment variables for a JDK 1.4.2 build">
+	<property name="jdk_home" location="i:\develop\jdk_142"/>
+	<property name="jre_home" location="i:\develop\jre_142"/>
+	<property name="build_subversion" value="_142"/>
+	<property name="includes"
+        	value=" ${package}\CWRAT.java,
+        		${package}\CWRATMainJFrame.java"/>
+	<property name="compiler" value="modern"/>
+	<property name="executable" value="${jdk_home}\bin\javac"/>
+
+	<property name="blessed_dir" 
+		location="\cdss\develop\classes${build_subversion}"/>
+	<property name="rti_blessed_dir" 
+		location="I:\develop\classes${build_subversion}"/>
+	<property name="blessed_javadoc_dir" 
+		location="\cdss\develop\javadoc${build_subversion}"/>
+
+	<path id="classpath">
+		<pathelement location="${build}${build_subversion}"/>
+		<path refid="swing"/>
+<pathelement location="j:\cdss\develop\libHydroBaseDMIJava\classes_142"/>
+	<pathelement location="i:\develop\gis\libGeoViewJava\classes_142"/>
+	<pathelement location="i:\develop\gr\libGRJava\classes_142"/>
+	<pathelement location="i:\develop\util\libUtilTableJava\classes_142"/>
+		<pathelement location="${rti_blessed_dir}"/>
+		<pathelement location="\cdss\bin\RogueWave_140.jar"/>
+		<pathelement location="\cdss\bin\Informix_140.jar"/>
+		<pathelement location="\cdss\bin\Una2000_140.jar"/>
+		<pathelement location="\cdss\bin\Symantec_140.jar"/>
+		<pathelement location="i:\develop\dmi\sql2000\lib\msbase.jar"/>
+		<pathelement location="i:\develop\dmi\sql2000\lib\msutil.jar"/>
+	<pathelement location="i:\develop\dmi\sql2000\lib\mssqlserver.jar"/>
+		<pathelement location="i:\develop\bin\una2000.jar"/>
+		<pathelement location="i:\develop\bin\RTi_142.jar"/>
+		<pathelement location="${blessed_dir}"/>
+	</path>
+</target>
+
+<!--
+================================================================================
+INIT
+	Initialization of environment variables for using JDK 1.4.0
+================================================================================
+-->
+<target name="init_140"
+	description="Set-up of the environment variables for a JDK 1.4.0 build">
+	<property name="jdk_home" location="i:\develop\jdk_140"/>
+	<property name="jre_home" location="i:\develop\jre_140"/>
+	<property name="build_subversion" value="_140"/>
+	<property name="includes"
+        	value=" ${package}\CWRAT.java,
+        		${package}\CWRATMainJFrame.java"/>
+	<property name="compiler" value="modern"/>
+	<property name="executable" value="${jdk_home}\bin\javac"/>
+
+	<property name="blessed_dir" 
+		location="\cdss\develop\classes${build_subversion}"/>
+	<property name="rti_blessed_dir" 
+		location="I:\develop\classes${build_subversion}"/>
+	<property name="blessed_javadoc_dir" 
+		location="\cdss\develop\javadoc${build_subversion}"/>
+
+	<path id="classpath">
+		<pathelement location="${build}${build_subversion}"/>
+		<pathelement location="${jdk_home}\lib\classes.zip"/>
+		<path refid="swing"/>
+	<pathelement location="i:\develop\gis\libGeoViewJava\classes_140"/>
+	<pathelement location="i:\develop\gr\libGRJava\classes_140"/>
+		<pathelement location="${blessed_dir}"/>
+		<pathelement location="${rti_blessed_dir}"/>
+		<pathelement location="\cdss\bin\RogueWave_140.jar"/>
+		<pathelement location="\cdss\bin\Informix_140.jar"/>
+		<pathelement location="\cdss\bin\Una2000_140.jar"/>
+		<pathelement location="\cdss\bin\Symantec_140.jar"/>
+		<pathelement location="i:\develop\dmi\sql2000\lib\msbase.jar"/>
+		<pathelement location="i:\develop\bin\una2000.jar"/>
+		<pathelement location="i:\develop\bin\RTi_140.jar"/>
+	</path>
+</target>
+
+<!--
+================================================================================
+COMPILE
+	Generic routine to compile for a given version
+================================================================================
+-->
+<target name="compile_generic"
+	description="Generic target for compiling source code">
+
+	<tstamp/>
+	<mkdir dir="${build}${build_subversion}"/>
+	
+	<!-- Compile the java code from ${src} into ${build} -->
+	<javac srcdir="${src}"
+		fork="yes"
+		includes="${includes}"
+		destdir="${build}${build_subversion}"
+		verbose="false"
+		debug="on"
+		deprecation="true"
+		executable="${executable}"
+		compiler="${compiler}">
+		<classpath refid="classpath"/>
+	</javac>
+</target>
+
+<!--
+================================================================================
+COMPILE
+	[Default Target]
+	This is the default target.  This is executed when ant is run without
+	any other arguments.  When a new JDk version is used and a target built
+	for it, the 'depends' argument in this target should be changed to point
+	to the new target.
+================================================================================
+-->
+<target name="compile"
+	depends="142"
+	description="Compile target for the latest java version"/>
+
+<!--
+================================================================================
+COMPILE
+	Version 1.4.2 Compile
+================================================================================
+-->
+<target name="142"
+	depends="init_142, compile_generic"
+	description="Compile target for JDK 1.4.2"/>
+
+<!--
+================================================================================
+COMPILE
+	Version 1.4.0 Compile
+================================================================================
+-->
+<target name="140"
+	depends="init_140, compile_generic"
+	description="Compile target for JDK 1.4.0"/>
+
+<!--
+================================================================================
+JAVADOC
+	Generic target for handling javadocing for a given version
+================================================================================
+-->
+<target name="javadoc_generic"
+	description="Target for creating Javadocs">
+	<javadoc
+		destdir="${basedir}\javadoc${build_subversion}">
+		<classpath refid="classpath"/>
+		<fileset dir="${src}"
+			includes="${includes}"/>
+	</javadoc>
+</target>	
+
+<!-- 
+================================================================================
+JAVADOC
+	Latest version Javadoc.  When a new JDK is added, the 'depends' 
+	argument should be updated to point to the new target.
+================================================================================
+-->
+<target name="javadoc"
+	depends="javadoc_142"
+	description="Target for creating Javadocs for latest JDK"/>
+
+<!-- 
+================================================================================
+JAVADOC
+	Javadoc for JDK 1.4.2
+================================================================================
+-->
+<target name="javadoc_142"
+	depends="init_142, javadoc_generic"
+	description="Target for creating Javadocs for 1.4.2"/>
+
+<!-- 
+================================================================================
+JAVADOC
+	Javadoc for JDK 1.4.0
+================================================================================
+-->
+<target name="javadoc_140"
+	depends="init_140, javadoc_generic"
+	description="Target for creating Javadocs for 1.4.0"/>
+
+<!-- 
+================================================================================
+CLEAN
+	Generic target for doing a clean for a given version
+================================================================================
+-->
+<target name="clean_generic"
+	description="Generic target for deleting class files">
+	<!-- Delete the ${build} tree -->
+	<delete dir="${build}${build_subversion}"/>
+	<delete dir="javadoc{build}${build_subversion}"/>
+</target>
+
+<!-- 
+================================================================================
+CLEAN
+	Latest version clean.  When a new JDk is added, the 'depends' argument
+	should be updated to point to the new target.
+================================================================================
+-->
+<target name="clean"
+	depends="clean_142"
+	description="Target for deleting the latest version's class files"/>
+
+<!-- 
+================================================================================
+CLEAN
+	Version 1.4.2 clean
+================================================================================
+-->
+<target name="clean_142" 
+	depends="init_142, clean_generic"	
+	description="Target for deleting JDK 1.4.2 class files"/>
+
+<!-- 
+================================================================================
+CLEAN
+	Version 1.4.0 clean
+================================================================================
+-->
+<target name="clean_140" 
+	depends="init_140, clean_generic"	
+	description="Target for deleting JDK 1.4.0 class files"/>
+
+<!-- 
+================================================================================
+INSTALL
+	Generic target for doing an install for a given version
+================================================================================
+-->
+<target name="install_generic"
+	description="Generic target for installing class files">
+<!--
+	<copy todir="${blessed_dir}"
+		overwrite="yes">
+		<fileset dir=".">
+	<include name="CWRAT${build_subversion}.jar"/>
+		</fileset>
+	</copy>
+-->
+	<copy todir="${blessed_dir}\${package}"
+		overwrite="yes">
+		<fileset dir="${build}${build_subversion}\${package}">
+			<include name="*.class"/>
+		</fileset>
+	</copy>
+	<copy 
+		file="J:\\CDSS\\develop\\doc\\graphics\\CWRATIcon32.gif"
+		todir="${blessed_dir}/DWR/DMI/CWRAT"/>
+	<copy 
+		file="J:\\CDSS\\develop\\doc\\graphics\\StateViewIcon32.gif"
+		todir="${blessed_dir}/DWR/DMI/CWRAT"/>	
+</target>
+
+<!-- 
+================================================================================
+INSTALL
+	Latest version install.  When a new JDK version is used, the 'depends'
+	argument should be updated to point to the new target.
+================================================================================
+-->
+<target name="install"
+	depends="install_142"
+	description="Target for installing the latest version's classes"/>
+
+<!-- 
+================================================================================
+INSTALL
+	Version 1.4.2 install
+================================================================================
+-->
+<target name="install_142"
+	depends="init_142, install_generic"
+	description="Target for installing JDk 1.4.2 classes"/>
+
+<!-- 
+================================================================================
+INSTALL
+	Version 1.4.0 install
+================================================================================
+-->
+<target name="install_140"
+	depends="init_140, install_generic"
+	description="Target for installing JDk 1.4.0 classes"/>
+
+<!-- 
+================================================================================
+INSTALL JAVADOC
+	Generic target for doing a Javadoc install for a given version
+================================================================================
+-->
+<target name="install_javadoc_generic"
+	description="Target for installing javadoc files">
+	<copy todir="${blessed_javadoc_dir}"
+		overwrite="yes">
+		<fileset dir="${basedir}\javadoc${build_subversion}">
+			<include name="RTi\**"/>
+		</fileset>
+	</copy>
+</target>
+
+<!-- 
+================================================================================
+INSTALL JAVADOC
+	Latest version Javadoc install.  When a new JDK is used, the 'depends'
+	arguments should be changed to point to the new target.
+================================================================================
+-->
+<target name="install_javadoc"
+	depends="install_javadoc_142"
+	description="Target for installing latest javadoc files"/>
+
+<!-- 
+================================================================================
+INSTALL JAVADOC
+	Target for installing JDK 1.4.2 Javadocs
+================================================================================
+-->
+<target name="install_javadoc_142"
+	depends="init_142, install_javadoc_generic"
+	description="Target for installing JDK 1.4.2 files"/>
+
+<!-- 
+================================================================================
+INSTALL JAVADOC
+	Target for installing JDK 1.4.0 Javadocs
+================================================================================
+-->
+<target name="install_javadoc_140"
+	depends="init_140, install_javadoc_generic"
+	description="Target for installing JDK 1.4.0 files"/>
+
+<!-- 
+================================================================================
+RUN
+	Generic target for handling runs for a given version
+================================================================================
+-->
+<target name="run_generic"
+	description="Generic target for running the class">
+<java classname="DWR.DMI.CWRAT.CWRAT"
+		fork="true"
+>
+<!-- This causes problems because the current drive should be used to run...
+		dir="${jre_home}\bin">
+-->
+		<jvmarg value="-mx128m"/>
+		<jvmarg value="-Djava.compiler=NONE"/>
+		<arg value="-test"/> 
+<!--		<arg value="-jtstest"/> -->
+		<arg value="-home"/>
+		<arg value="C:\cdss"/>
+		<arg value="-dbhost"/>
+		<arg value="localpc"/>
+		<arg value="-archive_dbhost"/>
+		<arg value="hbserver.riverside.com"/>
+		<arg value="-w10"/>
+		<classpath refid="classpath"/>		
+	</java>
+</target>
+
+<!-- 
+================================================================================
+RUN
+	Target for running the latest JDK version.  When a new JDK is used,
+	the 'depends' argument should be changed to point to the new target.
+================================================================================
+-->
+<target name="run"
+	depends="run_142"
+	description="Target for running with the latest classes"/>
+
+<!-- 
+================================================================================
+RUN
+	Target for running the program with JDK 1.4.2
+================================================================================
+-->
+<target name="run_142"
+	depends="init_142, run_generic"
+	description="Target for running with JDK 1.4.2 classes"/>
+
+<!-- 
+================================================================================
+RUN
+	Target for running the program with JDK 1.4.0
+================================================================================
+-->
+<target name="run_140"
+	depends="init_140, run_generic"
+	description="Target for running with JDK 1.4.0 classes"/>
+
+<!-- 
+================================================================================
+FULL
+	Target for doing a full run for the latest JDK version.  When a new JDK
+	is used, the 'depends' argument should be changed to point to the new
+	target.
+================================================================================
+-->
+<target name="full"
+	depends="full_142"
+	description="Cleans, builds, javadocs and installs the latest JDK"/>
+
+<!-- 
+================================================================================
+FULL
+	Target for doing a full run for JDK 1.4.2
+================================================================================
+-->
+<target name="full_142"
+	depends="init_142, clean_142, 142, javadoc_142, install_142, 
+		install_javadoc_142"
+	description="Cleans, builds, javadocs and installs JDK 1.4.2"/>
+
+<!-- 
+================================================================================
+FULL
+	Target for doing a full run for JDK 1.4.0
+================================================================================
+-->
+<target name="full_140"
+	depends="init_140, clean_140, 140, javadoc_140, install_140, 
+		install_javadoc_140"
+	description="Cleans, builds, javadocs and installs JDK 1.4.0"/>
+
+<!--
+================================================================================
+JAR
+	Target for doing generic jar routines
+================================================================================
+-->
+<target name="jar_generic"
+	description="Generic jar controller">
+	<delete file="CWRAT${build_subversion}.jar"/>
+	<jar destfile="CWRAT${build_subversion}.jar"
+		basedir="classes${build_subversion}"
+		includes="**/*.class, **/*.gif"/>
+</target>
+
+<!--
+================================================================================
+JAR
+	Target for jarring the latest version
+================================================================================
+-->
+<target name="jar"
+	description="Jar up the latest version"
+	depends="jar_142"/>
+
+<!--
+================================================================================
+JAR
+	Target for jarring JDk 1.4.2 classes
+================================================================================
+-->
+<target name="jar_142"
+	description="Jar up the JDK 1.4.2 version"
+	depends="init_142, jar_generic"/>
+
+<!--
+================================================================================
+JAR
+	Target for jarring JDk 1.4.0 classes
+================================================================================
+-->
+<target name="jar_140"
+	description="Jar up the JDK 1.4.0 version"
+	depends="init_140, jar_generic"/>
+
+<!-- 
+================================================================================
+HELP
+	Help
+================================================================================
+-->
+<target name="help"
+	description="Help on the targets that can be run in this build file">
+<echo>
+Valid targets are:
+[default]           - compiles with ${latest_version}
+140                 - compiles with JDK 1.4.0
+javadoc             - creates javadoc documentation for ${latest_version}
+javadoc             - creates javadoc documentation for JDK 1.4.0
+install             - copies ${latest_version} classes to blessed dir
+install             - copies JDK 1.4.0 classes to blessed dir
+install_javadoc     - installs the ${latest_version} javadocs
+install_javadoc     - installs the JDK 1.4.0 javadocs
+jar                 - jars the ${latest_version} classes
+jar                 - jars the JDK 1.4.0 classes
+clean               - deletes ${latest_version} classes directory
+clean               - deletes JDK 1.4.0 classes directory
+run                 - runs ${latest_version} ...
+run                 - runs JDK 1.4.0 ...
+full                - cleans, builds, javadocs and installs ${latest_version}
+full                - cleans, builds, javadocs and installs JDK 1.4.0
+</echo>
+</target>
+
+</project>

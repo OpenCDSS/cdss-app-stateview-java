@@ -1,0 +1,83 @@
+<project name="CWRAT" default="compile" basedir="../">
+    
+    <import file="../../rtibuild/common-build.xml"/>
+    <import file="../../rtibuild/common-doc.xml"/>
+    <import file="../../rtibuild/common-installer.xml"/>
+    
+    <target name="createInstaller" depends="clean,jar"
+            description="runs NSIS to create an executable installer">
+        
+        <ant antfile="../rtibuild/common-install.xml" 
+             target="createNJandNSIS" >
+            <property name="NJProj" value="${product.name}.njp" />
+            <property name="NJProj.dir" value="installer/CDSS" />
+            <property name="nsis.script" value="${product.name}.nsi" />
+        </ant>
+        
+    </target>
+    
+    <target name="createUserManual"
+            description="Merges PDF documentation into dist folder" >
+        
+        <ant antfile="../rtibuild/common-doc.xml"
+             target="mergePDF" >
+            <property name="filelist" 
+                      value="doc/CWRAT/UserManual/PDF/filelist.txt" />
+        </ant>
+        
+    </target>
+    
+    
+    <target name="CDSS_runDev" depends="-init,compile"
+            description="runs CDSS env. class files">
+        
+        <java classname="${classname}" fork="true">
+            <jvmarg    value = "-mx256m" />
+            <arg       value = "-home" />
+            <arg	   value = "${CDSS_OP.dir}" />
+            <classpath path  = "${run.classpath.computed}" />   
+        </java>	
+        
+    </target>
+    
+    <target name="CDSS_runDevD30" depends="-init,compile"
+            description="runs CDSS env. with class files and debug=30">
+        
+        <java classname="${classname}" fork="true">
+            <jvmarg    value = "-mx256m" />
+            <arg       value = "-home" />
+            <arg	   value = "${CDSS_OP.dir}" />
+            <arg		value = "-d" />
+            <arg		value = ",30" />
+            <classpath path  = "${run.classpath.computed}" />  
+        </java>	
+        
+    </target>
+    
+    <target name="CDSS_runOp" depends="jar"
+            description="runs CDSS env. with final jar file">
+        
+        <java classname="${classname}" fork="true">
+            <jvmarg    value = "-mx256m" />
+            <arg       value = "-home" />
+            <arg	   value = "${CDSS_OP.dir}" />
+            <classpath path  = "${run.classpath.computed}" />  
+        </java>	
+        
+    </target>
+    
+    <target name="CDSS_runOpD30" depends="jar"
+            description="runs CDSS env. with final jar file with debug=30">
+        
+        <java classname="${classname}" fork="true">
+            <jvmarg    value = "-mx256m" />
+            <arg       value = "-home" />
+            <arg	   value = "${CDSS_OP.dir}" />
+            <arg		value = "-d" />
+            <arg		value = ",30" />
+            <classpath path  = "${run.classpath.computed}" />    
+        </java>	
+        
+    </target>
+    
+</project>

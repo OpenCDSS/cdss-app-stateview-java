@@ -1,0 +1,7 @@
+# Repositories that comprise StateView
+# - assumes that local folder name will match the repository name
+cdss-app-stateview-java
+cdss-archive-nsis-2.46
+cdss-lib-common-java
+cdss-lib-dmi-hydrobase-java
+cdss-util-buildtools
